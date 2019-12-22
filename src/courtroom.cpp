@@ -2566,7 +2566,7 @@ void Courtroom::handle_song(QStringList *p_contents)
   }
 }
 
-void Courtroom::handle_wtce(QString p_wtce, int variant)
+void Courtroom::handle_wtce(QString p_wtce)
 {
   QString sfx_file = "courtroom_sounds.ini";
 
@@ -2585,19 +2585,19 @@ void Courtroom::handle_wtce(QString p_wtce, int variant)
     ui_vp_wtce->play("crossexamination");
     testimony_in_progress = false;
   }
-  else if (p_wtce == "judgeruling")
+  //not guilty
+  else if (p_wtce == "notguilty")
   {
-    if (variant == 0)
-    {
-        sfx_player->play(ao_app->get_sfx("not_guilty"));
-        ui_vp_wtce->play("notguilty");
-        testimony_in_progress = false;
-    }
-    else if (variant == 1) {
-        sfx_player->play(ao_app->get_sfx("guilty"));
-        ui_vp_wtce->play("guilty");
-        testimony_in_progress = false;
-    }
+      sfx_player->play(ao_app->get_sfx("not_guilty"));
+      ui_vp_wtce->play("notguilty");
+      testimony_in_progress = false;
+  }
+  //guilty
+  else if (p_wtce == "guilty")
+  {
+      sfx_player->play(ao_app->get_sfx("guilty"));
+      ui_vp_wtce->play("guilty");
+      testimony_in_progress = false;
   }
 }
 
@@ -3359,7 +3359,7 @@ void Courtroom::on_not_guilty_clicked()
   if (is_muted)
     return;
 
-  ao_app->send_server_packet(new AOPacket("RT#judgeruling#0#%"));
+  ao_app->send_server_packet(new AOPacket("RT#notguilty#%"));
 
   ui_ic_chat_message->setFocus();
 }
@@ -3369,7 +3369,7 @@ void Courtroom::on_guilty_clicked()
   if (is_muted)
     return;
 
-  ao_app->send_server_packet(new AOPacket("RT#judgeruling#1#%"));
+  ao_app->send_server_packet(new AOPacket("RT#guilty#%"));
 
   ui_ic_chat_message->setFocus();
 }

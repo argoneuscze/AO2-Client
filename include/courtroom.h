@@ -199,7 +199,7 @@ public:
   void play_preanim(bool noninterrupting);
 
   //plays the witness testimony or cross examination animation based on argument
-  void handle_wtce(QString p_wtce, int variant);
+  void handle_wtce(QString p_wtce);
 
   //sets the hp bar of defense(p_bar 1) or pro(p_bar 2)
   //state is an number between 0 and 10 inclusive
