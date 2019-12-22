@@ -495,16 +495,12 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
       }
       else
       {
-          if (f_contents.at(n_element).endsWith(".wav") ||
-                  f_contents.at(n_element).endsWith(".mp3") ||
-                  f_contents.at(n_element).endsWith(".mp4") ||
-                  f_contents.at(n_element).endsWith(".ogg") ||
-                  f_contents.at(n_element).endsWith(".opus"))
+          if (f_contents.at(n_element).startsWith("="))
           {
               musics_time = true;
-              w_courtroom->fix_last_area();
+              //w_courtroom->fix_last_area();
               w_courtroom->append_music(f_contents.at(n_element));
-              areas--;
+              //areas--;
           }
           else
           {
