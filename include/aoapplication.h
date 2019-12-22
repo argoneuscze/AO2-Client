@@ -308,9 +308,9 @@ public:
   QString get_casing_can_host_cases();
 
 private:
-  const int RELEASE = 2;
-  const int MAJOR_VERSION = 6;
-  const int MINOR_VERSION = 2;
+  const int RELEASE = 1;
+  const int MAJOR_VERSION = 0;
+  const int MINOR_VERSION = 0;
 
   QString current_theme = "default";
 

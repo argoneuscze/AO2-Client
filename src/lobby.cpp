@@ -9,7 +9,7 @@ Lobby::Lobby(AOApplication *p_ao_app) : QMainWindow()
 {
   ao_app = p_ao_app;
 
-  this->setWindowTitle(tr("Attorney Online 2"));
+  this->setWindowTitle(tr("Attorney Online 2 Classic"));
   this->setWindowIcon(QIcon(":/logo.png"));
 
   ui_background = new AOImage(this, ao_app);
@@ -102,7 +102,7 @@ void Lobby::set_widgets()
   ui_connect->set_image("connect.png");
 
   set_size_and_pos(ui_version, "version");
-  ui_version->setText(tr("Version: %1").arg(ao_app->get_version_string()));
+  ui_version->setText(tr("Version: Classic %1 (based on AO2 2.6.2)").arg(ao_app->get_version_string()));
 
   set_size_and_pos(ui_about, "about");
   ui_about->set_image("about.png");
@@ -268,16 +268,16 @@ void Lobby::on_connect_released()
 
 void Lobby::on_about_clicked()
 {
-  QString msg = tr("<h2>Attorney Online %1</h2>"
+  QString msg = tr("<h2>Attorney Online Classic %1</h2>"
                    "The courtroom drama simulator"
                    "<p><b>Source code:</b> "
-                   "<a href='https://github.com/AttorneyOnline/AO2-Client'>"
-                   "https://github.com/AttorneyOnline/AO2-Client</a>"
+                   "<a href='https://github.com/argoneuscze/AO2-Client/tree/aoclassic'>"
+                   "https://github.com/argoneuscze/AO2-Client/tree/aoclassic</a>"
                    "<p><b>Major development:</b><br>"
                    "OmniTroid, stonedDiscord, longbyte1, gameboyprinter, Cerapter"
                    "<p><b>Special thanks:</b><br>"
                    "Remy, Iamgoofball, Hibiki, Qubrick (webAO), Ruekasu (UI design), "
-                   "Draxirch (UI design), Unishred, Argoneus (tsuserver), Fiercy, "
+                   "Draxirch (UI design), Unishred, argoneus (tsuserver), Fiercy, "
                    "Noevain, Cronnicossy")
           .arg(ao_app->get_version_string());
   QMessageBox::about(this, "About", msg);
