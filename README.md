@@ -84,6 +84,10 @@ Hello there! This text goes at normal speed.} Now, it's a bit faster!{ Now, it's
 
 If you begin a message with `~~` (two tildes), the two tildes are removed and the message is centered.
 
+#### Screenshake / Realization
+
+Type `@` to apply screenshake, or `$` to apply realization ("ding") at any part of your message.
+
 ### Pairing
 
 If two players are in the same position and select each other's characters using the in-game pair list, they will appear alongside each other. You can set the offset of your character using the provided spinbox.
