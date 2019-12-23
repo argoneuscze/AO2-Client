@@ -1008,18 +1008,21 @@ void Courtroom::list_areas()
 
     if (ao_app->arup_enabled)
     {
-      i_area.append("\n  ");
+      if (arup_statuses.at(n_area) == "NOCASE") {
+        i_area.append("\n  Users: ");
+        i_area.append(QString::number(arup_players.at(n_area)));
+      } else {
+        i_area.append("\n  ");
+        i_area.append(arup_statuses.at(n_area));
 
-      i_area.append(arup_statuses.at(n_area));
-      i_area.append(" | CM: ");
-      i_area.append(arup_cms.at(n_area));
+        i_area.append(" | Users: ");
+        i_area.append(QString::number(arup_players.at(n_area)));
 
-      i_area.append("\n  ");
+        i_area.append("\n  CM: ");
+        i_area.append(arup_cms.at(n_area));
 
-      i_area.append(QString::number(arup_players.at(n_area)));
-      i_area.append(" users | ");
-
-      i_area.append(arup_locks.at(n_area));
+        // i_area.append(arup_locks.at(n_area));
+      }
     }
 
     if (i_area.toLower().contains(ui_music_search->text().toLower()))
@@ -1037,16 +1040,25 @@ void Courtroom::list_areas()
         }
         else
         {
-            if (arup_statuses.at(n_area) == "LOOKING-FOR-PLAYERS")
-                ui_area_list->item(n_listed_areas)->setBackground(lfp_brush);
-            else if (arup_statuses.at(n_area) == "CASING")
-                ui_area_list->item(n_listed_areas)->setBackground(casing_brush);
-            else if (arup_statuses.at(n_area) == "RECESS")
-                ui_area_list->item(n_listed_areas)->setBackground(recess_brush);
-            else if (arup_statuses.at(n_area) == "RP")
-                ui_area_list->item(n_listed_areas)->setBackground(rp_brush);
-            else if (arup_statuses.at(n_area) == "GAMING")
-                ui_area_list->item(n_listed_areas)->setBackground(gaming_brush);
+//            if (arup_statuses.at(n_area) == "LOOKING-FOR-PLAYERS")
+//                ui_area_list->item(n_listed_areas)->setBackground(lfp_brush);
+//            else if (arup_statuses.at(n_area) == "CASING")
+//                ui_area_list->item(n_listed_areas)->setBackground(casing_brush);
+//            else if (arup_statuses.at(n_area) == "RECESS")
+//                ui_area_list->item(n_listed_areas)->setBackground(recess_brush);
+//            else if (arup_statuses.at(n_area) == "")
+//                ui_area_list->item(n_listed_areas)->setBackground(rp_brush);
+//            else if (arup_statuses.at(n_area) == "GAMING")
+//                ui_area_list->item(n_listed_areas)->setBackground(gaming_brush);
+
+              if (arup_statuses.at(n_area) == "BUILDING")
+                  ui_area_list->item(n_listed_areas)->setBackground(lfp_brush);
+              else if (arup_statuses.at(n_area) == "CASING")
+                  ui_area_list->item(n_listed_areas)->setBackground(casing_brush);
+              else if (arup_statuses.at(n_area) == "RECESS")
+                  ui_area_list->item(n_listed_areas)->setBackground(recess_brush);
+              else if (arup_statuses.at(n_area) == "NOCASE")
+                  ui_area_list->item(n_listed_areas)->setBackground(rp_brush);
         }
       }
       else
