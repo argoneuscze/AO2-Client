@@ -789,7 +789,7 @@ void Courtroom::set_size_and_pos(QWidget *p_widget, QString p_identifier)
   }
 }
 
-QPoint Courtroom::get_theme_pos(QString p_identifier)
+pos_size_type Courtroom::get_theme_size_and_pos(QString p_identifier)
 {
   QString filename = "courtroom_design.ini";
 
@@ -798,11 +798,16 @@ QPoint Courtroom::get_theme_pos(QString p_identifier)
   if (design_ini_result.width < 0 || design_ini_result.height < 0)
   {
     qDebug() << "W: could not find \"" << p_identifier << "\" in " << filename;
-    return QPoint(0,0);
+    pos_size_type ret;
+    ret.x = 0;
+    ret.y = 0;
+    ret.width = 0;
+    ret.height = 0;
+    return ret;
   }
   else
   {
-    return QPoint(design_ini_result.x, design_ini_result.y);
+    return design_ini_result;
   }
 }
 
@@ -2068,8 +2073,8 @@ void Courtroom::doScreenShake()
     screenshake_group = new QParallelAnimationGroup;
     screenshake_animation = new QPropertyAnimation(ui_viewport, "pos", this);
     chatbox_screenshake_animation = new QPropertyAnimation(ui_vp_chatbox, "pos", this);
-    int screen_x = get_theme_pos("viewport").x();
-    int screen_y = get_theme_pos("viewport").y();
+    int screen_x = get_theme_size_and_pos("viewport").x;
+    int screen_y = get_theme_size_and_pos("viewport").y;
     QPoint pos_default = QPoint(screen_x, screen_y);
     QPoint pos1 = QPoint(screen_x + 3, screen_y + -5);
     QPoint pos2 = QPoint(screen_x + 3, screen_y + -5);
@@ -2077,8 +2082,8 @@ void Courtroom::doScreenShake()
     QPoint pos4 = QPoint(screen_x + 3, screen_y + -5);
     QPoint pos5 = QPoint(screen_x + -3,screen_y + -5);
 
-    int chatbox_x = get_theme_pos("ao2_chatbox").x();
-    int chatbox_y = get_theme_pos("ao2_chatbox").y();
+    int chatbox_x = get_theme_size_and_pos("ao2_chatbox").x;
+    int chatbox_y = get_theme_size_and_pos("ao2_chatbox").y;
     QPoint chatbox_pos_default = QPoint(chatbox_x, chatbox_y);
     QPoint chatbox_pos1 = QPoint(chatbox_x + 3, chatbox_y + -5);
     QPoint chatbox_pos2 = QPoint(chatbox_x + 3, chatbox_y + -5);
