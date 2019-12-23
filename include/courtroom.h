@@ -49,6 +49,8 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QTextBoundaryFinder>
+#include <QPropertyAnimation>
+#include <QParallelAnimationGroup>
 
 #include <stack>
 
@@ -121,6 +123,7 @@ public:
 
   //reads theme inis and sets size and pos based on the identifier
   void set_size_and_pos(QWidget *p_widget, QString p_identifier);
+  QPoint get_theme_pos(QString p_identifier);
 
   //sets status as taken on character with cid n_char and places proper shading on charselect
   void set_taken(int n_char, bool p_taken);
@@ -212,6 +215,9 @@ public:
 
   void check_connection_received();
 
+  void doScreenShake();
+  void doRealization();
+
   ~Courtroom();
 
 private:
@@ -262,6 +268,13 @@ private:
 
   // The offset this user has given if they want to appear alongside someone.
   int offset_with_pair = 0;
+
+  // Screenshake stuff
+  QPropertyAnimation *screenshake_animation;
+  QPropertyAnimation *chatbox_screenshake_animation;
+  QParallelAnimationGroup *screenshake_group;
+
+  // Lists
 
   QVector<char_type> char_list;
   QVector<evi_type> evidence_list;
@@ -317,7 +330,7 @@ private:
   //every time point in char.inis times this equals the final time
   const int time_mod = 40;
 
-  static const int chatmessage_size = 23;
+  static const int chatmessage_size = 28;
   QString m_chatmessage[chatmessage_size];
   bool chatmessage_is_empty = false;
 
@@ -351,6 +364,7 @@ private:
 
   int objection_state = 0;
   int realization_state = 0;
+  int screenshake_state = 0;
   int text_color = 0;
   bool is_presenting_evidence = false;
 
@@ -477,6 +491,7 @@ private:
 
   AOButton *ui_custom_objection;
   AOButton *ui_realization;
+  AOButton *ui_screenshake;
   AOButton *ui_mute;
 
   AOButton *ui_defense_plus;
@@ -605,6 +620,7 @@ private slots:
   void on_custom_objection_clicked();
 
   void on_realization_clicked();
+  void on_screenshake_clicked();
 
   void on_mute_clicked();
   void on_pair_clicked();

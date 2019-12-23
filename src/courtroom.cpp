@@ -219,6 +219,7 @@ Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow()
 
   ui_custom_objection = new AOButton(this, ao_app);
   ui_realization = new AOButton(this, ao_app);
+  ui_screenshake = new AOButton(this, ao_app);
   ui_mute = new AOButton(this, ao_app);
 
   ui_defense_plus = new AOButton(this, ao_app);
@@ -304,6 +305,7 @@ Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow()
   connect(ui_custom_objection, SIGNAL(clicked()), this, SLOT(on_custom_objection_clicked()));
 
   connect(ui_realization, SIGNAL(clicked()), this, SLOT(on_realization_clicked()));
+  connect(ui_screenshake, SIGNAL(clicked()), this, SLOT(on_screenshake_clicked()));
 
   connect(ui_mute, SIGNAL(clicked()), this, SLOT(on_mute_clicked()));
 
@@ -642,6 +644,9 @@ void Courtroom::set_widgets()
   set_size_and_pos(ui_realization, "realization");
   ui_realization->set_image("realization.png");
 
+  set_size_and_pos(ui_screenshake, "screenshake");
+  ui_screenshake->set_image("screenshake.png");
+
   set_size_and_pos(ui_mute, "mute_button");
   ui_mute->set_image("mute.png");
 
@@ -781,6 +786,23 @@ void Courtroom::set_size_and_pos(QWidget *p_widget, QString p_identifier)
   {
     p_widget->move(design_ini_result.x, design_ini_result.y);
     p_widget->resize(design_ini_result.width, design_ini_result.height);
+  }
+}
+
+QPoint Courtroom::get_theme_pos(QString p_identifier)
+{
+  QString filename = "courtroom_design.ini";
+
+  pos_size_type design_ini_result = ao_app->get_element_dimensions(p_identifier, filename);
+
+  if (design_ini_result.width < 0 || design_ini_result.height < 0)
+  {
+    qDebug() << "W: could not find \"" << p_identifier << "\" in " << filename;
+    return QPoint(0,0);
+  }
+  else
+  {
+    return QPoint(design_ini_result.x, design_ini_result.y);
   }
 }
 
@@ -1113,13 +1135,15 @@ void Courtroom::on_chat_return_pressed()
   //placeholder#
   //realization#
   //text_color#%
-
-  // Additionally, in our case:
-
   //showname#
   //other_charid#
   //self_offset#
   //noninterrupting_preanim#%
+  //loop_sfx
+  //screenshake
+  //frame_screenshake
+  //frame_realization
+  //frame_sfx
 
   QStringList packet_contents;
 
@@ -1262,6 +1286,19 @@ void Courtroom::on_chat_return_pressed()
     }
   }
 
+  // Looping SFX
+  // TODO
+  packet_contents.append("0");
+
+  // Screenshake
+  packet_contents.append(QString::number(screenshake_state));
+
+  // Frame specific animations/SFX
+  // TODO
+  packet_contents.append("TODO"); // frame screenshake
+  packet_contents.append("TODO"); // frame realization
+  packet_contents.append("TODO"); // frame sfx
+
   ao_app->send_server_packet(new AOPacket("MS", packet_contents));
 }
 
@@ -1330,6 +1367,7 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
     ui_ic_chat_message->clear();
     objection_state = 0;
     realization_state = 0;
+    screenshake_state = 0;
     is_presenting_evidence = false;
     ui_pre->setChecked(false);
     ui_hold_it->set_image("holdit.png");
@@ -1337,6 +1375,7 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
     ui_take_that->set_image("takethat.png");
     ui_custom_objection->set_image("custom.png");
     ui_realization->set_image("realization.png");
+    ui_screenshake->set_image("screenshake.png");
     ui_evidence_present->set_image("present_disabled.png");
   }
 
@@ -1596,6 +1635,12 @@ void Courtroom::handle_chatmessage_2()
     }
   }
 
+  // screenshake
+  if (m_chatmessage[SCREENSHAKE] == "1")
+  {
+    this->doScreenShake();
+  }
+
   switch (emote_mod)
   {
   case 1: case 2: case 6:
@@ -1739,6 +1784,18 @@ QString Courtroom::filter_ic_text(QString p_text)
           p_text.remove(trick_check_pos,1);
       }
       else if (f_character == "}" and !ic_next_is_not_special)
+      {
+          p_text.remove(trick_check_pos,1);
+      }
+
+      // Realization
+      else if (f_character == "$" and !ic_next_is_not_special)
+      {
+          p_text.remove(trick_check_pos,1);
+      }
+
+      // Screenshake
+      else if (f_character == "@" and !ic_next_is_not_special)
       {
           p_text.remove(trick_check_pos,1);
       }
@@ -2000,6 +2057,59 @@ void Courtroom::realization_done()
   ui_vp_realization->hide();
 }
 
+void Courtroom::doRealization()
+{
+    realization_timer->start(60);
+    ui_vp_realization->show();
+}
+
+void Courtroom::doScreenShake()
+{
+    screenshake_group = new QParallelAnimationGroup;
+    screenshake_animation = new QPropertyAnimation(ui_viewport, "pos", this);
+    chatbox_screenshake_animation = new QPropertyAnimation(ui_vp_chatbox, "pos", this);
+    int screen_x = get_theme_pos("viewport").x();
+    int screen_y = get_theme_pos("viewport").y();
+    QPoint pos_default = QPoint(screen_x, screen_y);
+    QPoint pos1 = QPoint(screen_x + 3, screen_y + -5);
+    QPoint pos2 = QPoint(screen_x + 3, screen_y + -5);
+    QPoint pos3 = QPoint(screen_x + -3, screen_y + 5);
+    QPoint pos4 = QPoint(screen_x + 3, screen_y + -5);
+    QPoint pos5 = QPoint(screen_x + -3,screen_y + -5);
+
+    int chatbox_x = get_theme_pos("ao2_chatbox").x();
+    int chatbox_y = get_theme_pos("ao2_chatbox").y();
+    QPoint chatbox_pos_default = QPoint(chatbox_x, chatbox_y);
+    QPoint chatbox_pos1 = QPoint(chatbox_x + 3, chatbox_y + -5);
+    QPoint chatbox_pos2 = QPoint(chatbox_x + 3, chatbox_y + -5);
+    QPoint chatbox_pos3 = QPoint(chatbox_x + -3, chatbox_y + 5);
+    QPoint chatbox_pos4 = QPoint(chatbox_x + 3, chatbox_y + -5);
+    QPoint chatbox_pos5 = QPoint(chatbox_x + -3,chatbox_y + -5);
+
+    screenshake_animation->setDuration(200);
+    screenshake_animation->setKeyValueAt(0, pos_default);
+    screenshake_animation->setKeyValueAt(0.1, pos1);
+    screenshake_animation->setKeyValueAt(0.3, pos2);
+    screenshake_animation->setKeyValueAt(0.5, pos3);
+    screenshake_animation->setKeyValueAt(0.7, pos4);
+    screenshake_animation->setKeyValueAt(0.9, pos5);
+    screenshake_animation->setEndValue(pos_default);
+    screenshake_animation->setEasingCurve(QEasingCurve::Linear);
+    chatbox_screenshake_animation->setDuration(200);
+    chatbox_screenshake_animation->setKeyValueAt(0, chatbox_pos_default);
+    chatbox_screenshake_animation->setKeyValueAt(0.1, chatbox_pos3);
+    chatbox_screenshake_animation->setKeyValueAt(0.3, chatbox_pos5);
+    chatbox_screenshake_animation->setKeyValueAt(0.5, chatbox_pos2);
+    chatbox_screenshake_animation->setKeyValueAt(0.7, chatbox_pos1);
+    chatbox_screenshake_animation->setKeyValueAt(0.9, chatbox_pos4);
+    chatbox_screenshake_animation->setEndValue(chatbox_pos_default);
+    chatbox_screenshake_animation->setEasingCurve(QEasingCurve::Linear);
+
+    screenshake_group->addAnimation(screenshake_animation);
+    screenshake_group->addAnimation(chatbox_screenshake_animation);
+    screenshake_group->start(QAbstractAnimation::DeletionPolicy::DeleteWhenStopped);
+}
+
 void Courtroom::start_chat_ticking()
 {
   //we need to ensure that the text isn't already ticking because this function can be called by two logic paths
@@ -2120,6 +2230,17 @@ void Courtroom::chat_tick()
     else if (f_character == "}" and !next_character_is_not_special)
     {
         current_display_speed--;
+        formatting_char = true;
+    }
+    else if (f_character == "@" and !next_character_is_not_special)
+    {
+        this->doScreenShake();
+        formatting_char = true;
+    }
+
+    else if (f_character == "$" and !next_character_is_not_special)
+    {
+        this->doRealization();
         formatting_char = true;
     }
 
@@ -3239,6 +3360,22 @@ void Courtroom::on_realization_clicked()
   {
     realization_state = 0;
     ui_realization->set_image("realization.png");
+  }
+
+  ui_ic_chat_message->setFocus();
+}
+
+void Courtroom::on_screenshake_clicked()
+{
+  if (screenshake_state == 0)
+  {
+    screenshake_state = 1;
+    ui_screenshake->set_image("screenshake_pressed.png");
+  }
+  else
+  {
+    screenshake_state = 0;
+    ui_screenshake->set_image("screenshake.png");
   }
 
   ui_ic_chat_message->setFocus();
