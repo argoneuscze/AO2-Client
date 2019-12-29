@@ -177,7 +177,7 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
 
     w_lobby->enable_connect_button();
 
-    send_server_packet(new AOPacket("ID#AO2#" + get_version_string() + "#%"));
+    send_server_packet(new AOPacket("ID#AOClassic#" + get_version_string() + "#%"));
   }
   else if (header == "CT")
   {
