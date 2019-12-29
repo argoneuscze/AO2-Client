@@ -1933,7 +1933,7 @@ void Courtroom::append_ic_text(QString p_text, QString p_name, bool is_songchang
       if (is_songchange)
       {
         ui_ic_chatlog->textCursor().insertText(" has played a song: ", normal);
-        ui_ic_chatlog->textCursor().insertText(p_text + ".", italics);
+        ui_ic_chatlog->textCursor().insertText(p_text + ".", bold);
       }
       else
       {
