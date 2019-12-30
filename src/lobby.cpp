@@ -102,7 +102,15 @@ void Lobby::set_widgets()
   ui_connect->set_image("connect.png");
 
   set_size_and_pos(ui_version, "version");
-  ui_version->setText(tr("Version: Classic %1 (based on AO2 2.6.2)").arg(ao_app->get_version_string()));
+  QString ver = tr("Classic %1 ").arg(ao_app->get_version_string());
+  #ifdef Q_PROCESSOR_X86_64
+    ver += "64-bit";
+  #endif
+  #ifdef Q_PROCESSOR_X86_32
+    ver += "32-bit";
+  #endif
+  ver += " (based on AO2 2.6.2)";
+  ui_version->setText(ver);
 
   set_size_and_pos(ui_about, "about");
   ui_about->set_image("about.png");
